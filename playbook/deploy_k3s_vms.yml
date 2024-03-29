@@ -3,19 +3,20 @@
   hosts: all
   vars:
     - vmname: k3s1-
-    - ip: 192.168.1.200
+#    - ip: 192.168.1.200
     - image_url:
       - "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
     - image_path: "/Users/davedemlow/tmp/" # ~/tmp/" #path to download file
   connection: local
   gather_facts: false
-  strategy: host_pinned # free  #allows each cluster to start next task before all clusters have finished current task
+  strategy: free # free  #allows each cluster to start next task before all clusters have finished current task
   environment:  # if set here - hypercore modules will automatically use this for each remote cluster - avoiding need to specify cluster_instance for each test
-    SC_HOST: "https://{{ inventory_hostname }}"
+    SC_HOST: "https://{{ hypercore_hostname }}"
     SC_USERNAME: "{{ scale_user }}"
     SC_PASSWORD: "{{ scale_pass }}"
   roles:
     - url2template
+#TODO - check if host ip already online?
 
   tasks:
     - name: Generate 5 digit random character password using lower case ans set as variable named ran5
@@ -63,10 +64,11 @@
               auto lo
               iface lo inet loopback
               iface ens1 inet static
-                address {{ ip }}
+                address {{ inventory_hostname }}
                 netmask 255.255.255.0
                 gateway 192.168.1.1
                 dns-nameservers 8.8.8.8
+      throttle: 1  # prevents multiple clones from same source causing error
 
     - name: Disk desired configuration for "{{ vmname }}{{ran5}}"
       scale_computing.hypercore.vm_disk:
@@ -89,3 +91,6 @@
           - SERIAL
         vcpu: 4
         power_state: start
+
+    - name: wait for ssh connection to provisioned VMs
+      ansible.builtin.wait_for_connection:

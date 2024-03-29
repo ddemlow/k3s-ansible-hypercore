@@ -4,13 +4,13 @@ k3s_cluster:
     server:
       hosts:
         192.168.1.200:
-        192.168.1.204:
-        192.168.1.205:
-    agent:
-      hosts:
         192.168.1.201:
         192.168.1.202:
+    agent:
+      hosts:
         192.168.1.203:
+        192.168.1.204:
+        192.168.1.205:
 
   # Required Vars
   vars:
@@ -21,6 +21,10 @@ k3s_cluster:
     api_endpoint: "{{ hostvars[groups['server'][0]]['ansible_host'] | default(groups['server'][0]) }}"
     extra_server_args: ""
     extra_agent_args: ""
+    hypercore_hostname: 192.168.1.240
+    scale_user: admin
+    scale_pass: admin
+    site_name: k3s 
 
   # Optional vars
     # api_port: 6443

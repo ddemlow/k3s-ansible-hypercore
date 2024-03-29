@@ -15,6 +15,7 @@
       force: false
     register: download
     loop: "{{ image_url }}"
+    throttle: 1 
 
   - name: Delete existing uploading-"{{ image_name }}" virtual disk # recovers from any previous failed upload 
     scale_computing.hypercore.virtual_disk:
@@ -31,7 +32,7 @@
     register: uploadResult
     loop: "{{ image_url }}" 
     ignore_errors: false
-
+    throttle: 1 
 #TODO - could use a handler to force update virtual disk attached to template only if there is a new download or upload?
 
   - name: Get info about template VM {{ image_name }}
@@ -62,6 +63,7 @@
       machine_type: "BIOS"    
     when:  vm_info_result.records | length == 0   #only create VM if it doesn't already exist - else would delete existing template disk
     register: template
+    throttle: 1 
 
   - name: Attach uploaded virtual disk to  "{{ image_name }}" template  # this will attach latest image every time - should there be way to only attach if not exist?
     scale_computing.hypercore.virtual_disk_attach:
@@ -69,7 +71,7 @@
       vm_name: "{{ image_name }}"
       disk:
         type: virtio_disk
-        disk_slot: 1
+        disk_slot: 0
         
         disable_snapshotting: false
     register: diskattached
@@ -78,7 +80,7 @@
     scale_computing.hypercore.vm_disk:
       vm_name: "{{ image_name }}"
       items:
-        - disk_slot: 1
+        - disk_slot: 0
           type: virtio_disk
           size: "{{ '300 GB' | human_to_bytes }}" # 50GB | human to bytes results in 53.7GB VSD in Hypercore
       state: present
@@ -88,6 +90,8 @@
       vm_name: "{{ image_name }}"
       items:
         - type: virtio_disk
-          disk_slot: 1
+          disk_slot: 0
       state: present
     register: bootable
+
+
