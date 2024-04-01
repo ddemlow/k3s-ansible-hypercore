@@ -4,6 +4,8 @@ WORK IN PROCESS to adapt for use with Scale Computing HyperCore Ansible Collecti
 
 .playbook/deploy_k3s_vms.yml is wip VM provisioning that uses shared inventory file
 
+https://www.youtube.com/watch?v=_7oGJXzT9_8
+
 
 Author: <https://github.com/itwars>  
 Current Maintainer: <https://github.com/dereknola>
@@ -53,7 +55,7 @@ Start provisioning of the VMs for cluster using the following command:
 ansible-playbook playbook/deploy_k3s_vms.yml -i inventory.yml
 ```
 
-Start provisioning of K#S into those VMs for cluster using the following command:
+Start provisioning of K3S into those VMs for cluster using the following command:
 
 ```bash
 ansible-playbook playbook/site.yml -i inventory.yml
