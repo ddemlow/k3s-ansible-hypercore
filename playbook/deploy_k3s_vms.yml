@@ -1,5 +1,5 @@
 ---
-- name: Simple vm deploy docker single node  # edit vmname variable - use -l filter to specify cluster vs. full inventory
+- name: deploy VMs for k3s cluster   # edit vmname variable - use -l filter to specify cluster vs. full inventory
   hosts: all
   vars:
     - vmname: k3s1-
@@ -9,7 +9,7 @@
     - image_path: "/Users/davedemlow/tmp/" # ~/tmp/" #path to download file
   connection: local
   gather_facts: false
-  strategy: free # free  #allows each cluster to start next task before all clusters have finished current task
+  #strategy: #free # free  #allows each cluster to start next task before all clusters have finished current task
   environment:  # if set here - hypercore modules will automatically use this for each remote cluster - avoiding need to specify cluster_instance for each test
     SC_HOST: "https://{{ hypercore_hostname }}"
     SC_USERNAME: "{{ scale_user }}"
@@ -74,7 +74,7 @@
       scale_computing.hypercore.vm_disk:
         vm_name: "{{ vmname }}{{ran5}}"
         items:
-          - disk_slot: 0
+          - disk_slot: 1
             type: virtio_disk
             size: "{{ '300 GB' | human_to_bytes }}" # 50GB | human to bytes results in 53.7GB VSD in Hypercore
         state: present
