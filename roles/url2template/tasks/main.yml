@@ -72,9 +72,9 @@
       disk:
         type: virtio_disk
         disk_slot: 0
-        
         disable_snapshotting: false
     register: diskattached
+    throttle: 1 
 
   - name: Disk desired configuration for "{{ image_name }}"   # seems resizing disk before first boot causes panic on debian11 bulseye unless serial port exists - add SERIAL to tag or description
     scale_computing.hypercore.vm_disk:
@@ -84,6 +84,7 @@
           type: virtio_disk
           size: "{{ '300 GB' | human_to_bytes }}" # 50GB | human to bytes results in 53.7GB VSD in Hypercore
       state: present
+    throttle: 1 
 
   - name: Set attached vsd device as bootable
     scale_computing.hypercore.vm_boot_devices:
@@ -93,5 +94,6 @@
           disk_slot: 0
       state: present
     register: bootable
+    throttle: 1 
 
 
